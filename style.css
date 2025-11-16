@@ -1,0 +1,76 @@
+/* static/style.css */
+:root{
+  --bg: #0f1724;
+  --card: #0b1a2b;
+  --muted: #98a8b9;
+  --accent: #ffb703;
+  --accent2: #00b4d8;
+  --success: #38b000;
+  --danger: #ef476f;
+  --glass: rgba(255,255,255,0.03);
+}
+
+*{box-sizing:border-box}
+body{
+  background: linear-gradient(180deg,#071029 0%, #082136 100%);
+  color: #e6eef6;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  margin: 0;
+  padding: 28px;
+}
+.container{max-width:1100px;margin:0 auto}
+
+header{display:flex;justify-content:space-between;align-items:center}
+h1{margin:0;font-size:26px}
+.muted{color:var(--muted);font-size:13px}
+
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  padding:16px;
+  margin:12px 0;
+  border-radius:10px;
+  box-shadow: 0 6px 24px rgba(2,6,23,0.6);
+}
+
+.top-info{display:flex;justify-content:space-between;align-items:center}
+.top-info .left h2{margin:0}
+.score{font-size:28px;margin:4px 0;color:var(--accent)}
+.overs{font-size:14px;color:var(--muted)}
+.venue{font-size:14px;color:var(--muted)}
+
+label{display:block;margin:8px 0}
+input[type="text"], input[type="number"], textarea, select{
+  width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.02); color: #e6eef6;
+}
+textarea{min-height:70px}
+
+button{background:var(--accent);color:#052023;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+button.danger{background:var(--danger); color:white}
+button.accent{background:var(--accent2); color:white}
+button.muted{background:transparent;border:1px solid rgba(255,255,255,0.04)}
+.primary{background:linear-gradient(90deg,#ffb703,#ff8a00);color:#041014;font-weight:600}
+
+.ball-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.ball-buttons button{min-width:60px}
+
+.over-box{display:flex;gap:6px;flex-wrap:wrap;padding:8px}
+.ball-token{
+  padding:6px 10px;background:var(--glass);border-radius:6px;border:1px solid rgba(255,255,255,0.03);
+  font-weight:700;color:#e6eef6;
+}
+.ball-token.four{box-shadow:0 0 12px rgba(255,183,3,0.14);background: rgba(255,183,3,0.06); color:var(--accent)}
+.ball-token.six{box-shadow:0 0 12px rgba(0,180,216,0.14);background: rgba(0,180,216,0.04); color:var(--accent2)}
+.ball-token.wicket{box-shadow:0 0 12px rgba(239,71,111,0.14);background: rgba(239,71,111,0.04); color:var(--danger)}
+.ball-token.wide{background: rgba(255,255,255,0.02); color:#ffd8a8; border:1px dashed rgba(255,183,3,0.08)}
+.ball-token.noball{background: rgba(255,255,255,0.02); color:#b2f5ea}
+
+.columns{display:flex;gap:12px}
+.column{flex:1}
+
+.bat-row, .out-row{padding:6px;border-radius:6px;margin:6px 0;background: rgba(255,255,255,0.01)}
+.small{color:var(--muted);margin-left:8px;font-size:13px}
+.comp-over{padding:6px;margin:6px 0;background:rgba(255,255,255,0.01);border-radius:6px}
+
+footer{margin-top:18px;color:var(--muted)}

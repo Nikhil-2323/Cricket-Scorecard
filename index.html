@@ -1,0 +1,166 @@
+<!-- templates/index.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Live Cricket Scorecard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏏 Live Cricket Scorecard</h1>
+      <p class="muted">Flask demo — single match in memory (local use)</p>
+    </header>
+
+    {% if sc is none %}
+    <!-- Start Match Form -->
+    <section class="card">
+      <h2>Start Match</h2>
+      <form action="{{ url_for('start') }}" method="post" id="startForm">
+        <label>Team name
+          <input name="team_name" placeholder="Team A" />
+        </label>
+
+        <label>Players (comma separated, batting order)
+          <textarea name="players" placeholder="Rohit, Gill, Kohli, ..."></textarea>
+        </label>
+
+        <label>Available Bowlers (comma separated)
+          <input name="bowlers" placeholder="Bumrah, Shami, Jadeja, ..."/>
+        </label>
+
+        <label>Venue
+          <input name="venue" placeholder="E.g., Wankhede" />
+        </label>
+
+        <label>Mode
+          <select name="mode">
+            <option value="first">Batting First</option>
+            <option value="chase">Chasing</option>
+          </select>
+        </label>
+
+        <label>Target (if chasing)
+          <input name="target" type="number" />
+        </label>
+
+        <label>Overs
+          <input name="overs" type="number" value="20" min="1" />
+        </label>
+
+        <label>First bowler
+          <input name="first_bowler" placeholder="Bowler1" />
+        </label>
+
+        <label>Historical: wins when batting FIRST at venue
+          <input name="wins_first" type="number" value="0" min="0" />
+        </label>
+
+        <label>Historical: wins when batting SECOND at venue
+          <input name="wins_second" type="number" value="0" min="0" />
+        </label>
+
+        <button type="submit" class="primary">Start Match</button>
+      </form>
+    </section>
+
+    {% else %}
+    <!-- Scorecard UI -->
+    <section class="card top-info">
+      <div class="left">
+        <h2>{{ sc.team_name }}</h2>
+        <p class="score">{{ sc.total_runs }} / {{ sc.wickets }} <span class="overs">({{ sc.overs_str() }} ov)</span></p>
+        <p class="venue">Venue: <strong>{{ sc.venue }}</strong></p>
+        <p>Remaining overs: <strong>{{ sc.remaining_overs_str() }}</strong></p>
+      </div>
+      <div class="right">
+        <p>Mode: <strong>{{ sc.mode }}</strong></p>
+        {% if sc.mode == 'chase' and sc.target %}
+          <p>Target: <strong>{{ sc.target }}</strong></p>
+        {% endif %}
+        {% if sc.initial_win_probability_from_history() %}
+          <p>Venue history win% (bat-first): <strong>{{ sc.initial_win_probability_from_history() }}%</strong></p>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Current Over</h3>
+      <div id="current-over" class="over-box"></div>
+
+      <h3>Completed Overs</h3>
+      <div id="completed-overs"></div>
+
+      <h3>Bowler</h3>
+      <div id="current-bowler">
+        <form id="setBowlerForm" action="{{ url_for('set_bowler') }}" method="post">
+          <select id="bowlerSelect" name="bowler">
+            {% for b in sc.bowlers %}
+              <option value="{{ b }}" {% if sc.current_bowler == b %}selected{% endif %}>{{ b }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">Set Bowler</button>
+        </form>
+        <p>Current Bowler: <strong id="curBowler">{{ sc.current_bowler }}</strong></p>
+      </div>
+
+      <h3>Ball Controls</h3>
+      <div class="ball-buttons">
+        <!-- Buttons call JS -->
+        <button data-outcome="0">0</button>
+        <button data-outcome="1">1</button>
+        <button data-outcome="2">2</button>
+        <button data-outcome="3">3</button>
+        <button data-outcome="4">4</button>
+        <button data-outcome="6">6</button>
+        <button data-outcome="W" class="danger">W</button>
+        <button data-outcome="WD" class="accent">WD</button>
+        <button data-outcome="NB" class="accent">NB</button>
+        <button data-outcome="LB" class="muted">LB</button>
+        <button data-outcome="B" class="muted">Bye</button>
+      </div>
+      <p class="hint">After NB/WD you'll be asked for extra runs (if any). After wicket you'll be asked for reason.</p>
+
+      <h3>Predictions</h3>
+      <p>Predicted final (CRR): <span id="pred_rr">{{ sc.predicted_score(0.0) }}</span></p>
+      <p>Predicted (+2 RR): <span id="pred_rr2">{{ sc.predicted_score(2.0) }}</span></p>
+      <p>Predicted (+4 RR): <span id="pred_rr4">{{ sc.predicted_score(4.0) }}</span></p>
+    </section>
+
+    <section class="columns">
+      <div class="card column">
+        <h3>Batting - On Crease</h3>
+        <div id="current-batting"></div>
+      </div>
+
+      <div class="card column">
+        <h3>Batting - Out</h3>
+        <div id="out-batsmen"></div>
+      </div>
+
+      <div class="card column">
+        <h3>Bowling</h3>
+        <div id="bowling-stats"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Fall of Wickets</h3>
+      <div id="fall-of-wickets"></div>
+    </section>
+
+    <section class="card">
+      <h3>Extras</h3>
+      <div id="extras"></div>
+    </section>
+
+    {% endif %}
+
+    <footer>
+      <p class="muted">Click buttons for the ball outcome. UI will prompt for extra inputs where needed.</p>
+    </footer>
+  </div>
+</body>
+</html>
